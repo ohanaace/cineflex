@@ -12,7 +12,7 @@ export default function SeatsPage() {
     const [name, setName] = useState("") //armazena o nome do comprador
     const [cpf, setCpf] = useState("") //armazena o CPF do comprador
     const [ids, setIds] = useState([]) //armazena os IDs dos assentos reservados
-    
+
     useEffect(() => {
         async function fetchSeatsData() {
             const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
@@ -31,10 +31,10 @@ export default function SeatsPage() {
     async function submitData() {
         try {
             const body = { ids, name, cpf }
-            const info = {name, cpf, selectedSeatsNames, seat}
+            const info = { name, cpf, selectedSeatsNames, seat }
             const url = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many"
             await axios.post(url, body)
-            navigate("/sucesso", {state: info})
+            navigate("/sucesso", { state: info })
         } catch (error) {
             alert("Ops! Parece que ocorreu um erro na reserva dos assentos :(")
             console.log(error)
@@ -46,20 +46,22 @@ export default function SeatsPage() {
             return
         }
         setCpf(e.target.value)
-        
+
     }
-    function validateData(e) {
+    async function validateData(e) {
         e.preventDefault()
         const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
         const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+        const upperAlphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         const chars = [".", "-"]
         const splitCpf = cpf.split("")
         const invalidCpfChars = splitCpf.some(el => chars.includes(el))
-        const notANumberCpf = splitCpf.some(el => alphabet.includes(el))
+        const notANumberCpf = splitCpf.some(el => alphabet.includes(el) || upperAlphabet.includes(el))
         if (cpf.length !== 11 || notANumberCpf || invalidCpfChars) {
             alert("CPF inválido! Digite seu CPF no seguinte formato: 00000000000")
             return
         }
+
         const splitName = name.split("")
         const invalidName = splitName.some(el => numbers.includes(el))
         if (invalidName) {
@@ -71,6 +73,7 @@ export default function SeatsPage() {
             return
         }
         submitData()
+     
     }
     return (
         <PageContainer>
