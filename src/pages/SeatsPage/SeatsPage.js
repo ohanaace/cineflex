@@ -1,51 +1,86 @@
+import axios from "axios"
+import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
+import Seat from "./Seat"
 
 export default function SeatsPage() {
-
+    const [seat, setSeat] = useState({ id: "", name: "", day: { id: "", weekday: "", date: "" }, movie: { id: "", overview: "", posterURL: "", title: "" }, seats: [] })
+    const { idSessao } = useParams()
+    const navigate = useNavigate()
+    const [selectedSeatsNames, setSelectedSeatsNames] = useState([])
+    const [name, setName] = useState("") //armazena o nome do comprador
+    const [cpf, setCpf] = useState("") //armazena o CPF do comprador
+    const [ids, setIds] = useState([]) //armazena os IDs dos assentos reservados
+    
+    useEffect(() => {
+        async function fetchSeatsData() {
+            const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
+            const promise = await axios.get(URL)
+            try {
+                setSeat(promise.data)
+            } catch (error) {
+                console.log(error)
+                alert("Ocorreu um erro ao buscar os assentos para essa sessão :( Tente novamente")
+                window.location.reload()
+            }
+        }
+        fetchSeatsData()
+    }, [])
+    
     return (
         <PageContainer>
             Selecione o(s) assento(s)
 
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+                {seat.seats.map((sit) =>
+                    <Seat
+                        key={sit.id}
+                        isAvailable={sit.isAvailable}
+                        id={sit.id}
+                        name={sit.name}
+                        selectedSeatsNames={selectedSeatsNames}
+                        setSelectedSeatsNames={setSelectedSeatsNames}
+                        ids={ids}
+                        setIds={setIds}
+                    >
+                        {sit.name}
+                    </Seat>)}
+
             </SeatsContainer>
 
             <CaptionContainer>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle backgroundColor={"#1AAE9E"} borderColor={"#0E7D71"} />
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle backgroundColor={"#C3CFD9"} borderColor={"#7B8B99"} />
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle backgroundColor={"#FBE192"} borderColor={"#F7C52B"} />
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <label for="name">Nome do Comprador:</label>
+                <input id="name" placeholder="Digite seu nome..." required />
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <label for="cpf">CPF do Comprador:</label>
+                <input id="cpf" placeholder="Digite seu CPF..." required />
 
-                <button>Reservar Assento(s)</button>
+                <button type="submit"> Reservar Assento(s)</button>
             </FormContainer>
 
             <FooterContainer>
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={seat.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{seat.movie.title}</p>
+                    <p>{seat.day.weekday} - {seat.name}</p>
                 </div>
             </FooterContainer>
 
@@ -74,7 +109,7 @@ const SeatsContainer = styled.div`
     justify-content: center;
     margin-top: 20px;
 `
-const FormContainer = styled.div`
+const FormContainer = styled.form`
     width: calc(100vw - 40px); 
     display: flex;
     flex-direction: column;
@@ -96,8 +131,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${props => props.borderColor};
+    background-color: ${props => props.backgroundColor};
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -111,19 +146,6 @@ const CaptionItem = styled.div`
     flex-direction: column;
     align-items: center;
     font-size: 12px;
-`
-const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
-    height: 25px;
-    width: 25px;
-    border-radius: 25px;
-    font-family: 'Roboto';
-    font-size: 11px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 3px;
 `
 const FooterContainer = styled.div`
     width: 100%;
