@@ -28,16 +28,16 @@ export default function SessionsPage() {
             Selecione o horário
             <div>
                 {session.days.map((sesday) => 
-                        <SessionContainer key={sesday.id} >
+                        <SessionContainer key={sesday.id} data-test="movie-day" >
                           <span>  {sesday.weekday} - {sesday.date} </span>
                         <ButtonsContainer>
-                            {sesday.showtimes.map((hour) => <button key={hour.id} onClick={() => navigate(`/assentos/${hour.id}`)}> {hour.name} </button>)}
+                            {sesday.showtimes.map((hour) => <button data-test="showtime" key={hour.id} onClick={() => navigate(`/assentos/${hour.id}`)}> {hour.name} </button>)}
                         </ButtonsContainer>
                     </SessionContainer>
                 )}
             </div>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={session.posterURL} alt="poster" />
                 </div>

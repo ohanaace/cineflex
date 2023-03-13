@@ -9,7 +9,7 @@ export default function Seat(props) {
     const { id, ids, setIds, name, isAvailable, selectedSeatsNames, setSelectedSeatsNames } = props
 
     return (
-        <SeatItem selectedIds={selectedIds} setSelectedIds={setSelectedIds} isAvailable={isAvailable} onClick={() => selectSeat(isAvailable, id, name)} background={background} border={border}>
+        <SeatItem data-test="seat" selectedIds={selectedIds} setSelectedIds={setSelectedIds} isAvailable={isAvailable} onClick={() => selectSeat(isAvailable, id, name)} background={background} border={border}>
             {name}
         </SeatItem>
     )

@@ -12,7 +12,7 @@ export default function SeatsPage() {
     const [name, setName] = useState("") //armazena o nome do comprador
     const [cpf, setCpf] = useState("") //armazena o CPF do comprador
     const [ids, setIds] = useState([]) //armazena os IDs dos assentos reservados
-
+    
     useEffect(() => {
         async function fetchSeatsData() {
             const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
@@ -31,9 +31,10 @@ export default function SeatsPage() {
     async function submitData() {
         try {
             const body = { ids, name, cpf }
+            const info = {name, cpf, selectedSeatsNames, seat}
             const url = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many"
             await axios.post(url, body)
-            navigate("/sucesso")
+            navigate("/sucesso", {state: info})
         } catch (error) {
             alert("Ops! Parece que ocorreu um erro na reserva dos assentos :(")
             console.log(error)
@@ -112,6 +113,7 @@ export default function SeatsPage() {
                     placeholder="Digite seu nome..."
                     name={name}
                     onChange={handleInputChange}
+                    data-test="client-name"
                     required />
 
                 <label htmlFor="cpf">CPF do Comprador:</label>
@@ -120,12 +122,13 @@ export default function SeatsPage() {
                     placeholder="Digite seu CPF..."
                     name={cpf}
                     onChange={handleInputChange}
+                    data-test="client-cpf"
                     required />
 
                 <button type="submit"> Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer data-test="footer">
                 <div>
                     <img src={seat.movie.posterURL} alt="poster" />
                 </div>
