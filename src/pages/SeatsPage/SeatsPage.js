@@ -43,9 +43,10 @@ export default function SeatsPage() {
     function handleInputChange(e) {
         if (e.target.name === name) {
             setName(e.target.value)
-        } else {
-            setCpf(e.target.value)
+            return
         }
+        setCpf(e.target.value)
+        
     }
     function validateData(e) {
         e.preventDefault()
