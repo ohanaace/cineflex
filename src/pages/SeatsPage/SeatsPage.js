@@ -51,10 +51,11 @@ export default function SeatsPage() {
         e.preventDefault()
         const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
         const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+        const chars = [".", "-"]
         const splitCpf = cpf.split("")
-        console.log(splitCpf)
+        const invalidCpfChars = splitCpf.some(el => chars.includes(el))
         const notANumberCpf = splitCpf.some(el => alphabet.includes(el))
-        if (cpf.length !== 11 || notANumberCpf) {
+        if (cpf.length !== 11 || notANumberCpf || invalidCpfChars) {
             alert("CPF inválido! Digite seu CPF no seguinte formato: 00000000000")
             return
         }
@@ -112,6 +113,7 @@ export default function SeatsPage() {
                     id="name"
                     placeholder="Digite seu nome..."
                     name={name}
+                    value={name}
                     onChange={handleInputChange}
                     data-test="client-name"
                     required />
@@ -121,11 +123,12 @@ export default function SeatsPage() {
                     id="cpf"
                     placeholder="Digite seu CPF..."
                     name={cpf}
+                    value={cpf}
                     onChange={handleInputChange}
                     data-test="client-cpf"
                     required />
 
-                <button type="submit"> Reservar Assento(s)</button>
+                <button type="submit" data-test="book-seat-btn"> Reservar Assento(s)</button>
             </FormContainer>
 
             <FooterContainer data-test="footer">
