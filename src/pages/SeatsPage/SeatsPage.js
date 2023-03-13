@@ -12,7 +12,7 @@ export default function SeatsPage() {
     const [name, setName] = useState("") //armazena o nome do comprador
     const [cpf, setCpf] = useState("") //armazena o CPF do comprador
     const [ids, setIds] = useState([]) //armazena os IDs dos assentos reservados
-    
+
     useEffect(() => {
         async function fetchSeatsData() {
             const URL = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`
@@ -27,7 +27,48 @@ export default function SeatsPage() {
         }
         fetchSeatsData()
     }, [])
-    
+
+    async function submitData() {
+        try {
+            const body = { ids, name, cpf }
+            const url = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many"
+            await axios.post(url, body)
+            navigate("/sucesso")
+        } catch (error) {
+            alert("Ops! Parece que ocorreu um erro na reserva dos assentos :(")
+            console.log(error)
+        }
+    }
+    function handleInputChange(e) {
+        if (e.target.name === name) {
+            setName(e.target.value)
+        } else {
+            setCpf(e.target.value)
+        }
+    }
+    function validateData(e) {
+        e.preventDefault()
+        const numbers = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+        const alphabet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+        const splitCpf = cpf.split("")
+        console.log(splitCpf)
+        const notANumberCpf = splitCpf.some(el => alphabet.includes(el))
+        if (cpf.length !== 11 || notANumberCpf) {
+            alert("CPF inválido! Digite seu CPF no seguinte formato: 00000000000")
+            return
+        }
+        const splitName = name.split("")
+        const invalidName = splitName.some(el => numbers.includes(el))
+        if (invalidName) {
+            alert("Nome inválido! Verifique se o nome foi digitado corretamente")
+            return
+        }
+        if (ids.length === 0) {
+            alert("Escolha pelo menos um assento.")
+            return
+        }
+        submitData()
+    }
     return (
         <PageContainer>
             Selecione o(s) assento(s)
@@ -64,12 +105,22 @@ export default function SeatsPage() {
                 </CaptionItem>
             </CaptionContainer>
 
-            <FormContainer>
-                <label for="name">Nome do Comprador:</label>
-                <input id="name" placeholder="Digite seu nome..." required />
+            <FormContainer onSubmit={validateData}>
+                <label htmlFor="name">Nome do Comprador:</label>
+                <input
+                    id="name"
+                    placeholder="Digite seu nome..."
+                    name={name}
+                    onChange={handleInputChange}
+                    required />
 
-                <label for="cpf">CPF do Comprador:</label>
-                <input id="cpf" placeholder="Digite seu CPF..." required />
+                <label htmlFor="cpf">CPF do Comprador:</label>
+                <input
+                    id="cpf"
+                    placeholder="Digite seu CPF..."
+                    name={cpf}
+                    onChange={handleInputChange}
+                    required />
 
                 <button type="submit"> Reservar Assento(s)</button>
             </FormContainer>
